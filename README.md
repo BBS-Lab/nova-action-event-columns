@@ -14,6 +14,19 @@ Nova writes `action_events` through two internal paths (event-firing `->save()` 
 are populated no matter how the event is created: create, update, attach, delete, force-delete, restore,
 and every custom Nova action. **Works on Nova 4 and Nova 5.**
 
+## Screenshots
+
+> Split diagonally: **light theme** (top-left) / **dark theme** (bottom-right).
+
+The auto-registered "Action Events" resource, with the built-in `ip_address` column filled on every
+event:
+
+![Action Events resource with the IP column](art/action-events.png)
+
+An event's detail page shows every column as a field — including the built-in `IP`:
+
+![Action event detail with the IP field](art/action-event-detail.png)
+
 ## Features
 
 - 🌐 Built-in **`ip_address`** column captured from `request()->ip()`, toggleable via config
@@ -55,6 +68,9 @@ php artisan vendor:publish --tag=nova-action-event-columns-migrations
 
 # A stub for adding your own action_events column — edit it before migrating
 php artisan vendor:publish --tag=nova-action-event-columns-stub
+
+# Translations (en, fr) — to customise the resource / field labels
+php artisan vendor:publish --tag=nova-action-event-columns-translations
 
 php artisan migrate
 ```
@@ -109,11 +125,17 @@ public function boot(): void
 You must provision the database column yourself; publish the stub
 (`--tag=nova-action-event-columns-stub`), rename it, set the column name/type, and migrate.
 
-### Displaying columns in Nova
+### Viewing the events in Nova
 
 The package's `Nova\ActionResource` extends Nova's own and adds a field for each registered column —
 your registered field if you supplied one, otherwise the read-only default. The built-in `ip_address`
 ships as an "IP" field.
+
+It is **auto-registered as a navigable resource**, so an "Action Events" entry appears in the Nova
+sidebar and you can browse every event with its columns — no `Nova::resources()` wiring required.
+Events also appear on a record's detail page (Nova's built-in action-event feed). To opt out of the
+navigation entry — to register your own resource, or to keep Nova's default where events show only on
+detail pages — set `register_resource` to `false` (env `NOVA_ACTION_EVENT_COLUMNS_REGISTER_RESOURCE`).
 
 ### The `action-events:prune` command
 
